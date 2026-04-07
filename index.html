@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Click Safe</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="phone-shell">
+    <div class="app-screen">
+      <header class="topbar">
+        <div class="brand-mini">
+          <div class="logo-badge">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <div class="top-info">
+            <span class="small-label">Localização atual</span>
+            <strong id="locationText">Toque no ícone para obter sua localização</strong>
+          </div>
+        </div>
+
+        <button class="top-icon" onclick="getLocation()" aria-label="Obter localização">
+          <i class="fa-solid fa-location-dot"></i>
+        </button>
+      </header>
+
+      <main class="content">
+        <section class="hero-card section-block" id="inicio">
+          <div class="hero-text">
+            <h1>Você está em uma emergência?</h1>
+            <p>
+              Pressione o botão SOS e compartilhe sua localização com seus contatos.
+            </p>
+          </div>
+        </section>
+
+        <button class="tutorial-btn" onclick="toggleTutorial()">
+          <i class="fa-solid fa-book"></i>
+          Como usar o aplicativo
+        </button>
+
+        <section id="tutorialBox" class="tutorial-box hidden section-block">
+          <h3>Como usar</h3>
+
+          <div class="step-card">
+            <span class="step-number"><i class="fa-solid fa-user"></i></span>
+            <p>Cadastre pelo menos um contato.</p>
+          </div>
+
+          <div class="step-card">
+            <span class="step-number"><i class="fa-solid fa-location-crosshairs"></i></span>
+            <p>Toque no botão de localização.</p>
+          </div>
+
+          <div class="step-card">
+            <span class="step-number"><i class="fa-solid fa-triangle-exclamation"></i></span>
+            <p>Pressione o botão SOS.</p>
+          </div>
+
+          <div class="step-card">
+            <span class="step-number"><i class="fa-brands fa-whatsapp"></i></span>
+            <p>Envie sua localização pelo WhatsApp.</p>
+          </div>
+        </section>
+
+        <section class="sos-card section-block">
+          <div class="pulse-ring ring-1"></div>
+          <div class="pulse-ring ring-2"></div>
+          <div class="pulse-ring ring-3"></div>
+
+          <button class="main-sos" onclick="sendSOS()">
+            <span>SOS</span>
+            <small>Toque para enviar</small>
+          </button>
+        </section>
+
+        <section class="emergency-types section-block">
+          <h3>Qual é a emergência?</h3>
+          <div class="type-grid">
+            <button class="type-pill" onclick="selectEmergencyType(this, 'Médico')">
+              <i class="fa-solid fa-heart-pulse"></i> Médico
+            </button>
+            <button class="type-pill" onclick="selectEmergencyType(this, 'Incêndio')">
+              <i class="fa-solid fa-fire"></i> Incêndio
+            </button>
+            <button class="type-pill" onclick="selectEmergencyType(this, 'Desastre')">
+              <i class="fa-solid fa-cloud-showers-heavy"></i> Desastre
+            </button>
+            <button class="type-pill" onclick="selectEmergencyType(this, 'Acidente')">
+              <i class="fa-solid fa-car-burst"></i> Acidente
+            </button>
+            <button class="type-pill" onclick="selectEmergencyType(this, 'Violência')">
+              <i class="fa-solid fa-shield-halved"></i> Violência
+            </button>
+            <button class="type-pill" onclick="selectEmergencyType(this, 'Resgate')">
+              <i class="fa-solid fa-truck-medical"></i> Resgate
+            </button>
+          </div>
+        </section>
+
+        <section class="map-card section-block" id="mapa">
+          <div class="section-head">
+            <h3>Mapa / GPS</h3>
+            <button class="secondary-btn" onclick="openInGoogleMaps()">
+              <i class="fa-solid fa-map-location-dot"></i> Abrir Maps
+            </button>
+          </div>
+
+          <div id="mapContainer" class="map-placeholder">
+            Seu mapa aparecerá aqui após permitir a localização.
+          </div>
+        </section>
+
+        <section class="contacts-card section-block" id="contatos">
+          <div class="section-head">
+            <h3>Contatos</h3>
+          </div>
+
+          <div class="form-box">
+            <input type="text" id="name" placeholder="Nome" />
+            <input type="text" id="phone" placeholder="Telefone" />
+            <button class="save-btn" onclick="saveContact()">Salvar</button>
+          </div>
+
+          <div id="contactsList" class="contacts-list"></div>
+        </section>
+
+        <section class="map-card section-block" id="perfil">
+          <div class="section-head">
+            <h3>Perfil</h3>
+          </div>
+          <div class="map-placeholder">
+            Área do usuário
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav">
+        <button class="nav-item active" onclick="scrollToSection('inicio', this)">
+          <i class="fa-solid fa-house"></i>
+          <span>Início</span>
+        </button>
+
+        <button class="nav-item" onclick="scrollToSection('contatos', this)">
+          <i class="fa-solid fa-users"></i>
+          <span>Contatos</span>
+        </button>
+
+        <button class="nav-item" onclick="scrollToSection('mapa', this)">
+          <i class="fa-solid fa-map"></i>
+          <span>Mapa</span>
+        </button>
+
+        <button class="nav-item" onclick="scrollToSection('perfil', this)">
+          <i class="fa-solid fa-user"></i>
+          <span>Perfil</span>
+        </button>
+      </nav>
+
+      <button class="floating-sos" onclick="sendSOS()" aria-label="Enviar SOS">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
