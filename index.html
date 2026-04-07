@@ -151,7 +151,13 @@
             <input type="text" id="tipo_sanguineo" placeholder="Tipo sanguíneo" maxlength="3" />
             <textarea id="info_medica" placeholder="Informações médicas"></textarea>
 
-            <button class="save-btn" onclick="saveUserProfile()">Salvar perfil</button>
+            <button class="save-btn" onclick="saveUserProfile()">Salvar / Atualizar perfil</button>
+            <button class="secondary-btn profile-edit-btn" type="button" onclick="editUserProfile()">
+              Editar perfil
+            </button>
+            <button class="delete-btn profile-delete-btn" type="button" onclick="deleteUserProfile()">
+              Excluir perfil
+            </button>
           </div>
 
           <div id="profilePreview" class="profile-preview"></div>
@@ -169,12 +175,25 @@
             <input type="text" id="apelido_dispositivo" placeholder="Apelido do dispositivo" />
             <input type="number" id="nivel_bateria" placeholder="Nível de bateria (%)" min="0" max="100" />
             <input type="text" id="data_pareamento" placeholder="Data do emparelhamento" readonly />
+            <input type="text" id="status_dispositivo_texto" placeholder="Situação do dispositivo" readonly />
+
             <select id="status_ativo" class="form-select">
               <option value="true">Ativo</option>
               <option value="false">Inativo</option>
             </select>
 
-            <button class="save-btn" onclick="saveBluetoothDevice()">Salvar dispositivo</button>
+            <div class="device-actions">
+              <button class="save-btn" onclick="saveBluetoothDevice()">Salvar dispositivo</button>
+              <button class="secondary-btn" type="button" onclick="updateBatteryLevel()">
+                Atualizar bateria
+              </button>
+              <button class="secondary-btn" type="button" onclick="reconnectBluetoothDevice()">
+                Reconectar
+              </button>
+              <button class="delete-btn" type="button" onclick="disconnectBluetoothDevice()">
+                Desconectar
+              </button>
+            </div>
           </div>
 
           <div id="devicePreview" class="profile-preview"></div>

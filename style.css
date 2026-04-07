@@ -335,6 +335,7 @@ body {
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .secondary-btn,
@@ -412,6 +413,35 @@ body {
   padding: 13px;
   border-radius: 14px;
   font-size: 15px;
+  font-weight: bold;
+}
+
+/* PERFIL */
+.profile-edit-btn,
+.profile-delete-btn {
+  width: 100%;
+  align-self: stretch;
+}
+
+/* AÇÕES DO BLUETOOTH */
+.device-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.device-status-ok {
+  color: #15803d !important;
+  font-weight: bold;
+}
+
+.device-status-warning {
+  color: #b45309 !important;
+  font-weight: bold;
+}
+
+.device-status-error {
+  color: #b91c1c !important;
   font-weight: bold;
 }
 
@@ -601,6 +631,10 @@ body {
 
   .type-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .device-actions {
+    grid-template-columns: 1fr;
   }
 
   .floating-sos {

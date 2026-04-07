@@ -4,6 +4,7 @@ let selectedEmergencyType = "Emergência";
 let alertRecords = JSON.parse(localStorage.getItem("registros_alertas")) || [];
 let bluetoothDeviceData = JSON.parse(localStorage.getItem("dispositivo_bluetooth")) || null;
 let pairedBluetoothDevice = null;
+let bluetoothServer = null;
 
 const supportPoints = [
   {
@@ -158,7 +159,45 @@ function saveUserProfile() {
 
   localStorage.setItem("usuarios", JSON.stringify(usuario));
   renderUserProfile();
-  alert("Perfil salvo com sucesso.");
+  alert("Perfil salvo ou atualizado com sucesso.");
+}
+
+function editUserProfile() {
+  const savedProfile = JSON.parse(localStorage.getItem("usuarios"));
+
+  if (!savedProfile) {
+    alert("Nenhum perfil foi salvo ainda.");
+    return;
+  }
+
+  document.getElementById("nome_completo").value = savedProfile.nome_completo || "";
+  document.getElementById("email").value = savedProfile.email || "";
+  document.getElementById("senha").value = savedProfile.senha || "";
+  document.getElementById("celular_usuario").value = savedProfile.celular || "";
+  document.getElementById("tipo_sanguineo").value = savedProfile.tipo_sanguineo || "";
+  document.getElementById("info_medica").value = savedProfile.info_medica || "";
+
+  alert("Os dados do perfil foram carregados para edição.");
+}
+
+function deleteUserProfile() {
+  const confirmed = confirm("Tem certeza de que deseja excluir os dados do perfil?");
+
+  if (!confirmed) {
+    return;
+  }
+
+  localStorage.removeItem("usuarios");
+
+  document.getElementById("nome_completo").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("senha").value = "";
+  document.getElementById("celular_usuario").value = "";
+  document.getElementById("tipo_sanguineo").value = "";
+  document.getElementById("info_medica").value = "";
+
+  renderUserProfile();
+  alert("Os dados do perfil foram excluídos com sucesso.");
 }
 
 function renderUserProfile() {
@@ -207,10 +246,34 @@ function renderUserProfile() {
   `;
 }
 
+function setDeviceStatusText(text, visual = "warning") {
+  const statusInput = document.getElementById("status_dispositivo_texto");
+  if (!statusInput) return;
+
+  statusInput.value = text;
+  statusInput.classList.remove("device-status-ok", "device-status-warning", "device-status-error");
+
+  if (visual === "ok") statusInput.classList.add("device-status-ok");
+  if (visual === "warning") statusInput.classList.add("device-status-warning");
+  if (visual === "error") statusInput.classList.add("device-status-error");
+}
+
 async function pairBluetoothDevice() {
   if (!navigator.bluetooth) {
-    alert("Bluetooth não é compatível com este navegador. No iPhone com Safari, isso normalmente não funciona. Use Chrome ou Edge em um dispositivo compatível.");
+    setDeviceStatusText("Bluetooth não compatível neste navegador", "error");
+    alert("Bluetooth não é compatível com este navegador. Use HTTPS e, de preferência, Chrome ou Edge em dispositivo compatível.");
     return;
+  }
+
+  try {
+    const available = await navigator.bluetooth.getAvailability();
+    if (!available) {
+      setDeviceStatusText("Bluetooth indisponível no dispositivo", "error");
+      alert("O Bluetooth não está disponível neste dispositivo no momento.");
+      return;
+    }
+  } catch (error) {
+    console.log("Não foi possível verificar a disponibilidade do Bluetooth.", error);
   }
 
   try {
@@ -220,6 +283,10 @@ async function pairBluetoothDevice() {
     });
 
     pairedBluetoothDevice = device;
+    pairedBluetoothDevice.addEventListener(
+      "gattserverdisconnected",
+      handleBluetoothDisconnection
+    );
 
     const apelido = device.name || "Chaveiro Bluetooth";
     const now = new Date().toLocaleString("pt-BR");
@@ -228,27 +295,136 @@ async function pairBluetoothDevice() {
     document.getElementById("data_pareamento").value = now;
     document.getElementById("status_ativo").value = "true";
 
-    let nivelBateria = "";
+    setDeviceStatusText("Conectando ao dispositivo...", "warning");
 
-    try {
-      const server = await device.gatt.connect();
-      const service = await server.getPrimaryService("battery_service");
-      const characteristic = await service.getCharacteristic("battery_level");
-      const value = await characteristic.readValue();
-      nivelBateria = value.getUint8(0);
-      document.getElementById("nivel_bateria").value = nivelBateria;
-    } catch (batteryError) {
-      console.log("Não foi possível ler o nível de bateria do dispositivo.", batteryError);
-    }
+    bluetoothServer = await pairedBluetoothDevice.gatt.connect();
+
+    setDeviceStatusText("Dispositivo conectado", "ok");
+
+    await updateBatteryLevel();
+    saveBluetoothDevice(false);
 
     alert("Dispositivo emparelhado com sucesso.");
   } catch (error) {
     console.error(error);
+    setDeviceStatusText("Falha ao emparelhar o dispositivo", "error");
     alert("Não foi possível emparelhar o dispositivo Bluetooth.");
   }
 }
 
-function saveBluetoothDevice() {
+function handleBluetoothDisconnection() {
+  setDeviceStatusText("Dispositivo desconectado", "error");
+
+  if (bluetoothDeviceData) {
+    bluetoothDeviceData.status_ativo = false;
+    localStorage.setItem("dispositivo_bluetooth", JSON.stringify(bluetoothDeviceData));
+    renderBluetoothDevice();
+  }
+
+  tryAutoReconnect();
+}
+
+async function tryAutoReconnect() {
+  if (!pairedBluetoothDevice) return;
+
+  setDeviceStatusText("Tentando reconectar...", "warning");
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      bluetoothServer = await pairedBluetoothDevice.gatt.connect();
+      setDeviceStatusText("Reconectado com sucesso", "ok");
+
+      if (bluetoothDeviceData) {
+        bluetoothDeviceData.status_ativo = true;
+        localStorage.setItem("dispositivo_bluetooth", JSON.stringify(bluetoothDeviceData));
+      }
+
+      await updateBatteryLevel();
+      renderBluetoothDevice();
+      return;
+    } catch (error) {
+      console.log(`Tentativa ${attempt} de reconexão falhou.`, error);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+  }
+
+  setDeviceStatusText("Não foi possível reconectar", "error");
+}
+
+async function reconnectBluetoothDevice() {
+  if (!pairedBluetoothDevice) {
+    alert("Nenhum dispositivo foi emparelhado nesta sessão.");
+    return;
+  }
+
+  try {
+    setDeviceStatusText("Reconectando...", "warning");
+    bluetoothServer = await pairedBluetoothDevice.gatt.connect();
+    setDeviceStatusText("Dispositivo reconectado", "ok");
+
+    if (bluetoothDeviceData) {
+      bluetoothDeviceData.status_ativo = true;
+      localStorage.setItem("dispositivo_bluetooth", JSON.stringify(bluetoothDeviceData));
+    }
+
+    await updateBatteryLevel();
+    renderBluetoothDevice();
+  } catch (error) {
+    console.error(error);
+    setDeviceStatusText("Falha na reconexão", "error");
+    alert("Não foi possível reconectar ao dispositivo.");
+  }
+}
+
+function disconnectBluetoothDevice() {
+  if (pairedBluetoothDevice && pairedBluetoothDevice.gatt && pairedBluetoothDevice.gatt.connected) {
+    pairedBluetoothDevice.gatt.disconnect();
+  }
+
+  setDeviceStatusText("Dispositivo desconectado", "error");
+
+  if (bluetoothDeviceData) {
+    bluetoothDeviceData.status_ativo = false;
+    localStorage.setItem("dispositivo_bluetooth", JSON.stringify(bluetoothDeviceData));
+    renderBluetoothDevice();
+  }
+}
+
+async function updateBatteryLevel() {
+  if (!pairedBluetoothDevice || !pairedBluetoothDevice.gatt) {
+    alert("Nenhum dispositivo conectado no momento.");
+    return;
+  }
+
+  try {
+    if (!pairedBluetoothDevice.gatt.connected) {
+      bluetoothServer = await pairedBluetoothDevice.gatt.connect();
+    }
+
+    const server = bluetoothServer || pairedBluetoothDevice.gatt;
+    const service = await server.getPrimaryService("battery_service");
+    const characteristic = await service.getCharacteristic("battery_level");
+    const value = await characteristic.readValue();
+    const batteryLevel = value.getUint8(0);
+
+    document.getElementById("nivel_bateria").value = batteryLevel;
+
+    if (bluetoothDeviceData) {
+      bluetoothDeviceData.nivel_bateria = batteryLevel;
+      bluetoothDeviceData.status_ativo = true;
+      localStorage.setItem("dispositivo_bluetooth", JSON.stringify(bluetoothDeviceData));
+    }
+
+    setDeviceStatusText("Bateria atualizada", "ok");
+    renderBluetoothDevice();
+  } catch (error) {
+    console.error(error);
+    setDeviceStatusText("Não foi possível ler a bateria", "warning");
+    alert("O dispositivo não informou o nível de bateria ou a leitura falhou.");
+  }
+}
+
+function saveBluetoothDevice(showAlert = true) {
   const savedUser = JSON.parse(localStorage.getItem("usuarios"));
 
   const apelido_dispositivo = document.getElementById("apelido_dispositivo").value.trim();
@@ -272,7 +448,10 @@ function saveBluetoothDevice() {
 
   localStorage.setItem("dispositivo_bluetooth", JSON.stringify(bluetoothDeviceData));
   renderBluetoothDevice();
-  alert("Dispositivo salvo com sucesso.");
+
+  if (showAlert) {
+    alert("Dispositivo salvo com sucesso.");
+  }
 }
 
 function renderBluetoothDevice() {
@@ -280,6 +459,7 @@ function renderBluetoothDevice() {
   if (!devicePreview) return;
 
   if (!bluetoothDeviceData) {
+    setDeviceStatusText("Nenhum dispositivo salvo", "warning");
     devicePreview.innerHTML = `
       <div class="empty-box">
         Nenhum dispositivo Bluetooth salvo ainda.
@@ -295,6 +475,11 @@ function renderBluetoothDevice() {
     bluetoothDeviceData.data_pareamento || "";
   document.getElementById("status_ativo").value =
     String(bluetoothDeviceData.status_ativo);
+
+  setDeviceStatusText(
+    bluetoothDeviceData.status_ativo ? "Dispositivo ativo" : "Dispositivo inativo",
+    bluetoothDeviceData.status_ativo ? "ok" : "warning"
+  );
 
   devicePreview.innerHTML = `
     <div class="profile-item">
