@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Click Safe</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -32,7 +35,7 @@
           <div class="hero-text">
             <h1>Você está em uma emergência?</h1>
             <p>
-              Pressione o botão SOS e compartilhe sua localização com seus contatos.
+              Pressione o botão SOS e compartilhe sua localização com seus contatos de emergência.
             </p>
           </div>
         </section>
@@ -46,23 +49,23 @@
           <h3>Como usar</h3>
 
           <div class="step-card">
-            <span class="step-number"><i class="fa-solid fa-user"></i></span>
-            <p>Cadastre pelo menos um contato.</p>
+            <span class="step-number"><i class="fa-solid fa-user-group"></i></span>
+            <p>Cadastre seu perfil e pelo menos um contato de emergência.</p>
+          </div>
+
+          <div class="step-card">
+            <span class="step-number"><i class="fa-solid fa-link"></i></span>
+            <p>Emparelhe seu chaveiro Bluetooth, se o navegador do seu celular for compatível.</p>
           </div>
 
           <div class="step-card">
             <span class="step-number"><i class="fa-solid fa-location-crosshairs"></i></span>
-            <p>Toque no botão de localização.</p>
+            <p>Toque no botão de localização para visualizar o mapa.</p>
           </div>
 
           <div class="step-card">
             <span class="step-number"><i class="fa-solid fa-triangle-exclamation"></i></span>
-            <p>Pressione o botão SOS.</p>
-          </div>
-
-          <div class="step-card">
-            <span class="step-number"><i class="fa-brands fa-whatsapp"></i></span>
-            <p>Envie sua localização pelo WhatsApp.</p>
+            <p>Selecione o tipo de emergência e toque no botão SOS.</p>
           </div>
         </section>
 
@@ -80,8 +83,8 @@
         <section class="emergency-types section-block">
           <h3>Qual é a emergência?</h3>
           <div class="type-grid">
-            <button class="type-pill" onclick="selectEmergencyType(this, 'Médico')">
-              <i class="fa-solid fa-heart-pulse"></i> Médico
+            <button class="type-pill" onclick="selectEmergencyType(this, 'Médica')">
+              <i class="fa-solid fa-heart-pulse"></i> Médica
             </button>
             <button class="type-pill" onclick="selectEmergencyType(this, 'Incêndio')">
               <i class="fa-solid fa-fire"></i> Incêndio
@@ -103,38 +106,85 @@
 
         <section class="map-card section-block" id="mapa">
           <div class="section-head">
-            <h3>Mapa / GPS</h3>
+            <h3>Localização no mapa</h3>
             <button class="secondary-btn" onclick="openInGoogleMaps()">
-              <i class="fa-solid fa-map-location-dot"></i> Abrir Maps
+              <i class="fa-solid fa-map-location-dot"></i> Abrir no Google Maps
             </button>
           </div>
 
           <div id="mapContainer" class="map-placeholder">
-            Seu mapa aparecerá aqui após permitir a localização.
+            Seu mapa aparecerá aqui após você permitir o acesso à localização.
+          </div>
+
+          <div class="support-card">
+            <h4>Pontos de apoio</h4>
+            <div id="supportPointsList" class="support-list"></div>
           </div>
         </section>
 
         <section class="contacts-card section-block" id="contatos">
           <div class="section-head">
-            <h3>Contatos</h3>
+            <h3>Contatos de emergência</h3>
           </div>
 
           <div class="form-box">
-            <input type="text" id="name" placeholder="Nome" />
-            <input type="text" id="phone" placeholder="Telefone" />
-            <button class="save-btn" onclick="saveContact()">Salvar</button>
+            <input type="text" id="nome_contato" placeholder="Nome do contato" />
+            <input type="text" id="celular_contato" placeholder="Número do celular" />
+            <input type="text" id="parentesco" placeholder="Grau de parentesco" />
+            <input type="number" id="ordem_prioridade" placeholder="Ordem de prioridade" min="1" />
+            <button class="save-btn" onclick="saveEmergencyContact()">Salvar contato</button>
           </div>
 
           <div id="contactsList" class="contacts-list"></div>
         </section>
 
-        <section class="map-card section-block" id="perfil">
+        <section class="profile-card section-block" id="perfil">
           <div class="section-head">
             <h3>Perfil</h3>
           </div>
-          <div class="map-placeholder">
-            Área do usuário
+
+          <div class="form-box">
+            <input type="text" id="nome_completo" placeholder="Nome completo" />
+            <input type="email" id="email" placeholder="E-mail" />
+            <input type="password" id="senha" placeholder="Senha" />
+            <input type="text" id="celular_usuario" placeholder="Telefone celular" />
+            <input type="text" id="tipo_sanguineo" placeholder="Tipo sanguíneo" maxlength="3" />
+            <textarea id="info_medica" placeholder="Informações médicas"></textarea>
+
+            <button class="save-btn" onclick="saveUserProfile()">Salvar perfil</button>
           </div>
+
+          <div id="profilePreview" class="profile-preview"></div>
+        </section>
+
+        <section class="device-card section-block">
+          <div class="section-head">
+            <h3>Chaveiro Bluetooth</h3>
+            <button class="secondary-btn" onclick="pairBluetoothDevice()">
+              <i class="fa-solid fa-bluetooth-b"></i> Emparelhar dispositivo
+            </button>
+          </div>
+
+          <div class="form-box">
+            <input type="text" id="apelido_dispositivo" placeholder="Apelido do dispositivo" />
+            <input type="number" id="nivel_bateria" placeholder="Nível de bateria (%)" min="0" max="100" />
+            <input type="text" id="data_pareamento" placeholder="Data do emparelhamento" readonly />
+            <select id="status_ativo" class="form-select">
+              <option value="true">Ativo</option>
+              <option value="false">Inativo</option>
+            </select>
+
+            <button class="save-btn" onclick="saveBluetoothDevice()">Salvar dispositivo</button>
+          </div>
+
+          <div id="devicePreview" class="profile-preview"></div>
+        </section>
+
+        <section class="alerts-card section-block">
+          <div class="section-head">
+            <h3>Histórico de alertas</h3>
+          </div>
+          <div id="alertsList" class="alerts-list"></div>
         </section>
       </main>
 
@@ -165,6 +215,13 @@
       </button>
     </div>
   </div>
+
+  <audio id="alertSound">
+    <source
+      src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg"
+      type="audio/ogg"
+    />
+  </audio>
 
   <script src="script.js"></script>
 </body>
