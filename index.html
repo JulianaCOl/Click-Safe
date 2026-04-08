@@ -20,8 +20,8 @@
             <i class="fa-solid fa-bolt"></i>
           </div>
           <div class="top-info">
-            <span class="small-label">Localização atual</span>
-            <strong id="locationText">Toque no ícone para obter sua localização</strong>
+            <span class="small-label" data-i18n="current_location_label">Localização atual</span>
+            <strong id="locationText" data-i18n="current_location_value">Toque no ícone para obter sua localização</strong>
           </div>
         </div>
 
@@ -31,10 +31,92 @@
       </header>
 
       <main class="content">
+        <section class="settings-card section-block">
+          <div class="section-head">
+            <h3 data-i18n="accessibility_title">Acessibilidade</h3>
+          </div>
+
+          <div class="settings-grid">
+            <div class="setting-box">
+              <label for="languageSelector" data-i18n="language_label">Idioma</label>
+              <select id="languageSelector" class="form-select" onchange="changeLanguage(this.value)">
+                <option value="pt-BR">Português</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+              </select>
+            </div>
+
+            <div class="setting-box">
+              <label data-i18n="font_size_label">Tamanho da letra</label>
+
+              <div class="font-size-buttons">
+                <button
+                  type="button"
+                  class="font-btn"
+                  id="fontBtnDecrease"
+                  onclick="changeFontSize('decrease')"
+                  aria-label="Diminuir letra"
+                  title="Diminuir letra"
+                >
+                  A-
+                </button>
+
+                <button
+                  type="button"
+                  class="font-btn active"
+                  id="fontBtnDefault"
+                  onclick="changeFontSize('default')"
+                  aria-label="Tamanho padrão"
+                  title="Tamanho padrão"
+                >
+                  A
+                </button>
+
+                <button
+                  type="button"
+                  class="font-btn"
+                  id="fontBtnIncrease"
+                  onclick="changeFontSize('increase')"
+                  aria-label="Aumentar letra"
+                  title="Aumentar letra"
+                >
+                  A+
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="voice-actions">
+            <button class="secondary-btn" type="button" onclick="speakCurrentScreen()">
+              <i class="fa-solid fa-volume-high"></i>
+              <span data-i18n="read_screen">Ouvir a tela</span>
+            </button>
+
+            <button class="secondary-btn" type="button" onclick="stopSpeaking()">
+              <i class="fa-solid fa-volume-xmark"></i>
+              <span data-i18n="stop_reading">Parar leitura</span>
+            </button>
+
+            <button class="secondary-btn" type="button" onclick="startVoiceRecognition()">
+              <i class="fa-solid fa-microphone"></i>
+              <span data-i18n="voice_command">Comando de voz</span>
+            </button>
+
+            <button class="secondary-btn" type="button" onclick="stopVoiceRecognition()">
+              <i class="fa-solid fa-microphone-slash"></i>
+              <span data-i18n="stop_voice_command">Parar comando de voz</span>
+            </button>
+          </div>
+
+          <div id="voiceStatus" class="voice-status" data-i18n="voice_status_idle">
+            Áudio e voz prontos para uso.
+          </div>
+        </section>
+
         <section class="hero-card section-block" id="inicio">
           <div class="hero-text">
-            <h1>Você está em uma emergência?</h1>
-            <p>
+            <h1 data-i18n="hero_title">Você está em uma emergência?</h1>
+            <p data-i18n="hero_text">
               Pressione o botão SOS e compartilhe sua localização com seus contatos de emergência.
             </p>
           </div>
@@ -42,30 +124,30 @@
 
         <button class="tutorial-btn" onclick="toggleTutorial()">
           <i class="fa-solid fa-book"></i>
-          Como usar o aplicativo
+          <span data-i18n="how_to_use_button">Como usar o aplicativo</span>
         </button>
 
         <section id="tutorialBox" class="tutorial-box hidden section-block">
-          <h3>Como usar</h3>
+          <h3 data-i18n="how_to_use_title">Como usar</h3>
 
           <div class="step-card">
             <span class="step-number"><i class="fa-solid fa-user-group"></i></span>
-            <p>Cadastre seu perfil e pelo menos um contato de emergência.</p>
+            <p data-i18n="tutorial_step_1">Cadastre seu perfil e pelo menos um contato de emergência.</p>
           </div>
 
           <div class="step-card">
-            <span class="step-number"><i class="fa-solid fa-link"></i></span>
-            <p>Emparelhe seu chaveiro Bluetooth, se o navegador do seu celular for compatível.</p>
+            <span class="step-number"><i class="fa-solid fa-key"></i></span>
+            <p data-i18n="tutorial_step_2">Emparelhe o chaveiro Bluetooth e ative a escuta do botão SOS.</p>
           </div>
 
           <div class="step-card">
             <span class="step-number"><i class="fa-solid fa-location-crosshairs"></i></span>
-            <p>Toque no botão de localização para visualizar o mapa.</p>
+            <p data-i18n="tutorial_step_3">Toque no botão de localização para visualizar o mapa.</p>
           </div>
 
           <div class="step-card">
             <span class="step-number"><i class="fa-solid fa-triangle-exclamation"></i></span>
-            <p>Selecione o tipo de emergência e toque no botão SOS.</p>
+            <p data-i18n="tutorial_step_4">Selecione o tipo de emergência e toque no botão SOS ou use o chaveiro.</p>
           </div>
         </section>
 
@@ -76,63 +158,63 @@
 
           <button class="main-sos" onclick="sendSOS()">
             <span>SOS</span>
-            <small>Toque para enviar</small>
+            <small data-i18n="sos_button_text">Toque para enviar</small>
           </button>
         </section>
 
         <section class="emergency-types section-block">
-          <h3>Qual é a emergência?</h3>
+          <h3 data-i18n="emergency_type_title">Qual é a emergência?</h3>
           <div class="type-grid">
-            <button class="type-pill" onclick="selectEmergencyType(this, 'Médica')">
-              <i class="fa-solid fa-heart-pulse"></i> Médica
+            <button class="type-pill" onclick="selectEmergencyType(this, 'medical')">
+              <i class="fa-solid fa-heart-pulse"></i> <span data-i18n="emergency_medical">Médica</span>
             </button>
-            <button class="type-pill" onclick="selectEmergencyType(this, 'Incêndio')">
-              <i class="fa-solid fa-fire"></i> Incêndio
+            <button class="type-pill" onclick="selectEmergencyType(this, 'fire')">
+              <i class="fa-solid fa-fire"></i> <span data-i18n="emergency_fire">Incêndio</span>
             </button>
-            <button class="type-pill" onclick="selectEmergencyType(this, 'Desastre')">
-              <i class="fa-solid fa-cloud-showers-heavy"></i> Desastre
+            <button class="type-pill" onclick="selectEmergencyType(this, 'disaster')">
+              <i class="fa-solid fa-cloud-showers-heavy"></i> <span data-i18n="emergency_disaster">Desastre</span>
             </button>
-            <button class="type-pill" onclick="selectEmergencyType(this, 'Acidente')">
-              <i class="fa-solid fa-car-burst"></i> Acidente
+            <button class="type-pill" onclick="selectEmergencyType(this, 'accident')">
+              <i class="fa-solid fa-car-burst"></i> <span data-i18n="emergency_accident">Acidente</span>
             </button>
-            <button class="type-pill" onclick="selectEmergencyType(this, 'Violência')">
-              <i class="fa-solid fa-shield-halved"></i> Violência
+            <button class="type-pill" onclick="selectEmergencyType(this, 'violence')">
+              <i class="fa-solid fa-shield-halved"></i> <span data-i18n="emergency_violence">Violência</span>
             </button>
-            <button class="type-pill" onclick="selectEmergencyType(this, 'Resgate')">
-              <i class="fa-solid fa-truck-medical"></i> Resgate
+            <button class="type-pill" onclick="selectEmergencyType(this, 'rescue')">
+              <i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_rescue">Resgate</span>
             </button>
           </div>
         </section>
 
         <section class="map-card section-block" id="mapa">
           <div class="section-head">
-            <h3>Localização no mapa</h3>
+            <h3 data-i18n="map_title">Localização no mapa</h3>
             <button class="secondary-btn" onclick="openInGoogleMaps()">
-              <i class="fa-solid fa-map-location-dot"></i> Abrir no Google Maps
+              <i class="fa-solid fa-map-location-dot"></i> <span data-i18n="open_google_maps">Abrir no Google Maps</span>
             </button>
           </div>
 
-          <div id="mapContainer" class="map-placeholder">
+          <div id="mapContainer" class="map-placeholder" data-i18n="map_placeholder">
             Seu mapa aparecerá aqui após você permitir o acesso à localização.
           </div>
 
           <div class="support-card">
-            <h4>Pontos de apoio</h4>
+            <h4 data-i18n="support_points_title">Pontos de apoio</h4>
             <div id="supportPointsList" class="support-list"></div>
           </div>
         </section>
 
         <section class="contacts-card section-block" id="contatos">
           <div class="section-head">
-            <h3>Contatos de emergência</h3>
+            <h3 data-i18n="contacts_title">Contatos de emergência</h3>
           </div>
 
           <div class="form-box">
-            <input type="text" id="nome_contato" placeholder="Nome do contato" />
-            <input type="text" id="celular_contato" placeholder="Número do celular" />
-            <input type="text" id="parentesco" placeholder="Grau de parentesco" />
-            <input type="number" id="ordem_prioridade" placeholder="Ordem de prioridade" min="1" />
-            <button class="save-btn" onclick="saveEmergencyContact()">Salvar contato</button>
+            <input type="text" id="nome_contato" data-i18n-placeholder="contact_name_placeholder" placeholder="Nome do contato" />
+            <input type="text" id="celular_contato" data-i18n-placeholder="contact_phone_placeholder" placeholder="Número do celular" />
+            <input type="text" id="parentesco" data-i18n-placeholder="contact_relationship_placeholder" placeholder="Grau de parentesco" />
+            <input type="number" id="ordem_prioridade" data-i18n-placeholder="contact_priority_placeholder" placeholder="Ordem de prioridade" min="1" />
+            <button class="save-btn" onclick="saveEmergencyContact()" data-i18n="save_contact">Salvar contato</button>
           </div>
 
           <div id="contactsList" class="contacts-list"></div>
@@ -140,22 +222,22 @@
 
         <section class="profile-card section-block" id="perfil">
           <div class="section-head">
-            <h3>Perfil</h3>
+            <h3 data-i18n="profile_title">Perfil</h3>
           </div>
 
           <div class="form-box">
-            <input type="text" id="nome_completo" placeholder="Nome completo" />
-            <input type="email" id="email" placeholder="E-mail" />
-            <input type="password" id="senha" placeholder="Senha" />
-            <input type="text" id="celular_usuario" placeholder="Telefone celular" />
-            <input type="text" id="tipo_sanguineo" placeholder="Tipo sanguíneo" maxlength="3" />
-            <textarea id="info_medica" placeholder="Informações médicas"></textarea>
+            <input type="text" id="nome_completo" data-i18n-placeholder="full_name_placeholder" placeholder="Nome completo" />
+            <input type="email" id="email" data-i18n-placeholder="email_placeholder" placeholder="E-mail" />
+            <input type="password" id="senha" data-i18n-placeholder="password_placeholder" placeholder="Senha" />
+            <input type="text" id="celular_usuario" data-i18n-placeholder="mobile_placeholder" placeholder="Telefone celular" />
+            <input type="text" id="tipo_sanguineo" data-i18n-placeholder="blood_type_placeholder" placeholder="Tipo sanguíneo" maxlength="3" />
+            <textarea id="info_medica" data-i18n-placeholder="medical_info_placeholder" placeholder="Informações médicas"></textarea>
 
-            <button class="save-btn" onclick="saveUserProfile()">Salvar / Atualizar perfil</button>
-            <button class="secondary-btn profile-edit-btn" type="button" onclick="editUserProfile()">
+            <button class="save-btn" onclick="saveUserProfile()" data-i18n="save_update_profile">Salvar / Atualizar perfil</button>
+            <button class="secondary-btn profile-edit-btn" type="button" onclick="editUserProfile()" data-i18n="edit_profile">
               Editar perfil
             </button>
-            <button class="delete-btn profile-delete-btn" type="button" onclick="deleteUserProfile()">
+            <button class="delete-btn profile-delete-btn" type="button" onclick="deleteUserProfile()" data-i18n="delete_profile">
               Excluir perfil
             </button>
           </div>
@@ -165,33 +247,36 @@
 
         <section class="device-card section-block">
           <div class="section-head">
-            <h3>Chaveiro Bluetooth</h3>
+            <h3 data-i18n="bluetooth_title">Chaveiro SOS</h3>
             <button class="secondary-btn" onclick="pairBluetoothDevice()">
-              <i class="fa-solid fa-bluetooth-b"></i> Emparelhar dispositivo
+              <i class="fa-solid fa-bluetooth-b"></i>
+              <span data-i18n="pair_device">Emparelhar chaveiro</span>
             </button>
           </div>
 
           <div class="form-box">
-            <input type="text" id="apelido_dispositivo" placeholder="Apelido do dispositivo" />
-            <input type="number" id="nivel_bateria" placeholder="Nível de bateria (%)" min="0" max="100" />
-            <input type="text" id="data_pareamento" placeholder="Data do emparelhamento" readonly />
-            <input type="text" id="status_dispositivo_texto" placeholder="Situação do dispositivo" readonly />
-
-            <select id="status_ativo" class="form-select">
-              <option value="true">Ativo</option>
-              <option value="false">Inativo</option>
-            </select>
+            <input
+              type="text"
+              id="status_dispositivo_texto"
+              data-i18n-placeholder="device_status_placeholder"
+              placeholder="Situação do chaveiro"
+              readonly
+            />
 
             <div class="device-actions">
-              <button class="save-btn" onclick="saveBluetoothDevice()">Salvar dispositivo</button>
-              <button class="secondary-btn" type="button" onclick="updateBatteryLevel()">
-                Atualizar bateria
+              <button class="secondary-btn" type="button" onclick="startDeviceSOSListener()">
+                <i class="fa-solid fa-bell"></i>
+                <span data-i18n="activate_keychain_sos">Ativar botão SOS do chaveiro</span>
               </button>
-              <button class="secondary-btn" type="button" onclick="reconnectBluetoothDevice()">
-                Reconectar
+
+              <button class="secondary-btn" type="button" onclick="stopDeviceSOSListener()">
+                <i class="fa-solid fa-bell-slash"></i>
+                <span data-i18n="stop_keychain_listener">Parar escuta</span>
               </button>
+
               <button class="delete-btn" type="button" onclick="disconnectBluetoothDevice()">
-                Desconectar
+                <i class="fa-solid fa-plug-circle-xmark"></i>
+                <span data-i18n="disconnect_device">Desconectar</span>
               </button>
             </div>
           </div>
@@ -201,7 +286,7 @@
 
         <section class="alerts-card section-block">
           <div class="section-head">
-            <h3>Histórico de alertas</h3>
+            <h3 data-i18n="alert_history_title">Histórico de alertas</h3>
           </div>
           <div id="alertsList" class="alerts-list"></div>
         </section>
@@ -210,22 +295,22 @@
       <nav class="bottom-nav">
         <button class="nav-item active" onclick="scrollToSection('inicio', this)">
           <i class="fa-solid fa-house"></i>
-          <span>Início</span>
+          <span data-i18n="nav_home">Início</span>
         </button>
 
         <button class="nav-item" onclick="scrollToSection('contatos', this)">
           <i class="fa-solid fa-users"></i>
-          <span>Contatos</span>
+          <span data-i18n="nav_contacts">Contatos</span>
         </button>
 
         <button class="nav-item" onclick="scrollToSection('mapa', this)">
           <i class="fa-solid fa-map"></i>
-          <span>Mapa</span>
+          <span data-i18n="nav_map">Mapa</span>
         </button>
 
         <button class="nav-item" onclick="scrollToSection('perfil', this)">
           <i class="fa-solid fa-user"></i>
-          <span>Perfil</span>
+          <span data-i18n="nav_profile">Perfil</span>
         </button>
       </nav>
 
