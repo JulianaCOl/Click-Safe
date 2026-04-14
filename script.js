@@ -179,6 +179,45 @@ function openInGoogleMaps() {
   window.open(`https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lng}`, "_blank");
 }
 
+function speakText(text) {
+  if (!("speechSynthesis" in window)) return;
+
+  speechSynthesis.cancel();
+
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "pt-BR";
+  msg.rate = 0.95;
+  msg.pitch = 1;
+  speechSynthesis.speak(msg);
+}
+
+function openSOSConfirmation() {
+  const tipoTraduzido = {
+    medical: "médica",
+    fire: "incêndio",
+    disaster: "desastre",
+    accident: "acidente",
+    violence: "violência",
+    rescue: "resgate"
+  };
+
+  const mensagemFalada =
+    `Confirmação de envio do SOS. Tipo de emergência selecionado: ${tipoTraduzido[emergencyType]}. ` +
+    `Se deseja continuar, selecione confirmar na mensagem exibida na tela.`;
+
+  speakText(mensagemFalada);
+
+  const confirmado = confirm(
+    `Confirmar envio do SOS?\n\nTipo de emergência: ${tipoTraduzido[emergencyType]}`
+  );
+
+  speechSynthesis.cancel();
+
+  if (confirmado) {
+    sendSOS();
+  }
+}
+
 function sendSOS() {
   const tipoTraduzido = {
     medical: "Médica",
@@ -189,7 +228,10 @@ function sendSOS() {
     rescue: "Resgate"
   };
 
-  alert(`SOS enviado!\nTipo: ${tipoTraduzido[emergencyType]}`);
+  const mensagem = `SOS enviado. Tipo de emergência: ${tipoTraduzido[emergencyType]}.`;
+
+  alert(mensagem);
+  speakText(mensagem);
 }
 
 function fontSize(type, clickedButton) {
@@ -214,6 +256,7 @@ function fontSize(type, clickedButton) {
 
 function lerTela() {
   const msg = new SpeechSynthesisUtterance(document.body.innerText);
+  msg.lang = "pt-BR";
   speechSynthesis.cancel();
   speechSynthesis.speak(msg);
 }

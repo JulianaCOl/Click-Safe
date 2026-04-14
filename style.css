@@ -57,8 +57,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background:
-    linear-gradient(180deg, #ffffff 0%, #fffaf6 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #fffaf6 100%);
 }
 
 .brand-mini {
@@ -192,9 +191,7 @@ body {
   justify-content: center;
   overflow: hidden;
   margin-bottom: 18px;
-  background:
-    radial-gradient(circle at center, rgba(255, 175, 135, 0.08), transparent 45%),
-    #ffffff;
+  background: radial-gradient(circle at center, rgba(255, 175, 135, 0.08), transparent 45%), #ffffff;
   border-radius: 24px;
   border: 1px solid var(--border);
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
@@ -229,7 +226,7 @@ body {
   height: 154px;
   border: none;
   border-radius: 50%;
-  background: linear-gradient(180deg, #ffb08e 0%, #ff7470 100%);
+  background: linear-gradient(180deg, #ff5a5a 0%, #d90429 100%);
   color: white;
   font-weight: bold;
   display: flex;
@@ -237,11 +234,20 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow:
-    0 0 0 18px rgba(255, 152, 120, 0.12),
-    0 14px 32px rgba(255, 120, 110, 0.28);
+    0 0 0 18px rgba(217, 4, 41, 0.12),
+    0 14px 32px rgba(217, 4, 41, 0.35);
   cursor: pointer;
   position: relative;
   z-index: 2;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.main-sos:hover {
+  transform: scale(1.05);
+}
+
+.main-sos:active {
+  transform: scale(0.96);
 }
 
 .main-sos span {
@@ -439,8 +445,7 @@ body {
   width: 100%;
   min-height: 220px;
   border-radius: 20px;
-  background:
-    linear-gradient(180deg, #f9fafc 0%, #f3f5f9 100%);
+  background: linear-gradient(180deg, #f9fafc 0%, #f3f5f9 100%);
   color: #6b7280;
   display: flex;
   align-items: center;
